@@ -6,6 +6,29 @@
 
 ## 警告！这是一个练手的demo
 
+> deno run --allow-net app.ts
+
+```typescript 
+
+// app.ts
+
+import { Done } from 'https://raw.githubusercontent.com/veaba/done/master/mod.ts'
+const done = new Done() // maybe need some options ...
+console.log('done 实例==>', done)
+// TODO 不要回调了，使用async的方法 
+done.get('/')
+    .then((ctx: any) => {
+        const { response = {} } = ctx || {}
+        const text = response.send("hello world")
+    })
+
+done.listen(9999)
+    .then(() => {
+        console.log(`Start Done server on port ${port}`)
+    })
+
+```
+
 ## 疑问
 
 - declare 用法是什么
@@ -105,3 +128,8 @@ const he = cool('/abs', (z, x) => {
 ## TODO: 如何测试框架性能？
 
 - string 和 其他类型的处理速度
+
+## TODO: 如何调用Deno内置方法
+
+error: TS1141 [ERROR]: String literal expected.
+import { listen } from Deno
