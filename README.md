@@ -4,6 +4,11 @@
 
 前期为了方便开发，嵌入到 https://github.com/veaba/blog 里面的 `src/done`
 
+现在只是非常的基础，在原标准库 `http/server.ts` 里面再做一次封装
+
+预期
+  - 使用最底层的库，从新封装一层才好
+
 ## 警告！这是一个练手的demo
 
 > deno run --allow-net app.ts
@@ -133,3 +138,16 @@ const he = cool('/abs', (z, x) => {
 
 error: TS1141 [ERROR]: String literal expected.
 import { listen } from Deno
+
+## TODO: koa 路由输入 （洋葱模型）
+
+实在太简单了，还是得要内置一波常用的东西，先实现功能，等待后续稳定再剥离，总结完善框架
+
+```js
+if (ctx.request.path == '/about') {
+    ctx.response.type = 'html'; // 指定返回类型为 html 类型
+    ctx.response.body = 'this is about page <a href="/">Go Index Page</a>';
+  } else {
+    ctx.response.body = 'this is index page';
+}
+```

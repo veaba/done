@@ -139,7 +139,7 @@ class Done {
     async get(str: string) {
         try {
             return await new Promise((resolve, reject) => {
-                //todo ctx interface
+                // TODO  ctx interface
                 const ctx: any = {}
                 ctx.request = { name: "request" }
                 ctx.response = {
