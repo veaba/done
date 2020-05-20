@@ -5,22 +5,22 @@
 */
 
 export default {
-    header(){
+    header() {
 
-    }
+    },
 
     // TODO get header 
     // TODO set header
-    headers(){
+    headers() {
 
-    }
-    url(){
+    },
+    url() {
 
-    }
+    },
 
-    origin(){
+    origin() {
 
-    }
+    },
 
     // header
     // headers

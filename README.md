@@ -151,3 +151,71 @@ if (ctx.request.path == '/about') {
     ctx.response.body = 'this is index page';
 }
 ```
+
+## TODO: 知识盲区
+
+- Unit8Array
+- buf
+
+## TODO: deno 返回的req
+
+```js
+
+ServerRequest {
+ done: Promise { <pending> },
+ _contentLength: undefined,
+ _body: null,
+ finalized: false,
+ conn: ConnImpl {
+  rid: 4,
+  remoteAddr: { hostname: "127.0.0.1", port: 15442, transport: "tcp" },
+  localAddr: { hostname: "127.0.0.1", port: 9999, transport: "tcp" }
+ },
+ r: BufReader {
+  r: 565,
+  w: 565,
+  eof: false,
+  buf: Uint8Array(4096) [
+       71,  69,  84,  32,  47, 102,  97, 118, 105,  99, 111, 110,  46, 105,  99,
+      111,  32,  72,  84,  84,  80,  47,  49,  46,  49,  13,  10,  72, 111, 115,
+      116,  58,  32,  49,  50,  55,  46,  48,  46,  48,  46,  49,  58,  57,  57,
+       57,  57,  13,  10,  67, 111, 110, 110, 101,  99, 116, 105, 111, 110,  58,
+       32, 107, 101, 101, 112,  45,  97, 108, 105, 118, 101,  13,  10,  80, 114,
+       97, 103, 109,  97,  58,  32, 110, 111,  45,  99,  97,  99, 104, 101,  13,
+       10,  67,  97,  99, 104, 101,  45,  67, 111, 110,
+      ... 3996 more items
+    ],
+  rd: ConnImpl {
+   rid: 4,
+   remoteAddr: { hostname: "127.0.0.1", port: 15442, transport: "tcp" },
+   localAddr: { hostname: "127.0.0.1", port: 9999, transport: "tcp" }
+  }
+ },
+ method: "GET",
+ url: "/favicon.ico",
+ proto: "HTTP/1.1",
+ protoMinor: 1,
+ protoMajor: 1,
+ headers: Headers { host: 127.0.0.1:9999, connection: keep-alive, pragma: no-cache, cache-control: no-cache, user-agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36, sec-fetch-dest: image, accept: image/webp,image/apng,image/*,*/*;q=0.8, sec-fetch-site: same-origin, sec-fetch-mode: no-cors, referer: http://127.0.0.1:9999/, accept-encoding: gzip, deflate, br, accept-language: zh-CN,zh;q=0.9,en;q=0.8, cookie: Hm_lvt_e8002ef3d9e0d8274b5b74cc4a027d08=1579594807,1579660868,1579742421 },
+ w: BufWriter {
+  usedBufferBytes: 39,
+  err: null,
+  writer: ConnImpl {
+   rid: 4,
+   remoteAddr: { hostname: "127.0.0.1", port: 15442, transport: "tcp" },
+   localAddr: { hostname: "127.0.0.1", port: 9999, transport: "tcp" }
+  },
+  buf: Uint8Array(4096) [
+       72,  84,  84,  80,  47,  49,  46,  49,  32,  50,  48,  48,  32,  79,  75,
+       13,  10,  99, 111, 110, 116, 101, 110, 116,  45, 108, 101, 110, 103, 116,
+      104,  58,  32,  49,  56,  13,  10,  13,  10,  72, 101, 108, 108, 111,  32,
+      119, 111, 114, 108, 100,  32, 104, 116, 109, 108,  32,  10,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+      ... 3996 more items
+    ]
+ }
+}
+
+```

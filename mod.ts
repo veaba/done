@@ -122,11 +122,18 @@
 
 import { createServer } from './src/http/server.ts'
 
+import context from "./src/context.ts"
+import request from "./src/request.ts"
+import response from "./src/response.ts"
 class Done {
 
     readonly name: string
     readonly version: string
     public options: any //TODO options interface
+    public request: object
+    public response: object
+    public context: object
+    public count: number
     constructor(options?: any) {
         this.options = options || {}
         this.version = "0.0.10"
@@ -134,11 +141,18 @@ class Done {
         console.log('======>', 'init')
 
         // TODO create a deno std Server
+
+        // init 
+        this.context = Object.create(context)
+        this.request = Object.create(request)
+        this.response = Object.create(response)
+        this.count = 0
+
     }
 
     async get(str: string) {
         try {
-            return await new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => {
                 // TODO  ctx interface
                 const ctx: any = {}
                 ctx.request = { name: "request" }
@@ -151,13 +165,13 @@ class Done {
             })
         } catch (error) {
             // TODO 打印log和控制台提示 
-            return await Promise.reject(error)
+            return Promise.reject(error)
         }
     }
 
     async listen(port: number) {
         try {
-            return await new Promise(async (resolve, reject) => {
+            return new Promise(async (resolve, reject) => {
                 // TODO create server here
                 await createServer(port)
                     .then(async (ser: any) => {
@@ -165,7 +179,34 @@ class Done {
                         // TODO 循环给methods使用
                         for await (const req of ser) {
                             // TODO 为什么刷新不会重新载入呢？
-                            req.respond({ body: "Hello world html \n" })
+                            console.log('await===>', this.count++)
+
+
+                            
+                            req.respond({ body: "Hello world html \n" }) // TODO 这个内容外部写入，这个respond接收的参数
+                            /*
+                            for (let xx in req) {
+                                console.log('xxx=>', x11x)
+                            }*/
+                            const { method, url } = req  // TODO {GET}
+                            console.log("method===>", method, url)
+                            // method GET                            
+                            // url "/favicon.ico", "/"
+                            /*
+                            xxx=> done
+                            xxx=> _contentLength
+                            xxx=> _body
+                            xxx=> finalized
+                            xxx=> conn
+                            xxx=> r
+                            xxx=> method
+                            xxx=> url
+                            xxx=> proto
+                            xxx=> protoMinor
+                            xxx=> protoMajor
+                            xxx=> headers
+                            xxx=> w
+                            */
                         }
                     })
             })
