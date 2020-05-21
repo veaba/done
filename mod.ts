@@ -134,6 +134,8 @@ class Done {
     public response: object
     public context: object
     public count: number
+    // TODO 假如这是外部传递进来的路由路径和method
+    public routerMethods: object
     constructor(options?: any) {
         this.options = options || {}
         this.version = "0.0.10"
@@ -147,10 +149,16 @@ class Done {
         this.request = Object.create(request)
         this.response = Object.create(response)
         this.count = 0
+        this.routerMethods = {
+            '/': "GET",
+            "favicon": "GET",
+            "about": "GET"
+        }
 
     }
-
+    // TODO 根据路由路径的不同，配置不同的method，然后返回响应的数据
     async get(str: string) {
+        console.log('classs=======>get', str)
         try {
             return new Promise((resolve, reject) => {
                 // TODO  ctx interface
@@ -175,39 +183,34 @@ class Done {
                 // TODO create server here
                 await createServer(port)
                     .then(async (ser: any) => {
-                        console.log('ser=>', ser)
+                        // TODO 模拟class的方法回调实例的方法
+
+                        setInterval(async () => {
+                            this.get('/')
+                                .then(() => {
+                                    return new Promise((resolve) => {
+                                        return resolve({ a: "22" })
+                                    })
+                                })
+                        }, 3000)
+
                         // TODO 循环给methods使用
                         for await (const req of ser) {
-                            // TODO 为什么刷新不会重新载入呢？
                             console.log('await===>', this.count++)
-
-
-                            
-                            req.respond({ body: "Hello world html \n" }) // TODO 这个内容外部写入，这个respond接收的参数
-                            /*
-                            for (let xx in req) {
-                                console.log('xxx=>', x11x)
-                            }*/
                             const { method, url } = req  // TODO {GET}
                             console.log("method===>", method, url)
-                            // method GET                            
-                            // url "/favicon.ico", "/"
-                            /*
-                            xxx=> done
-                            xxx=> _contentLength
-                            xxx=> _body
-                            xxx=> finalized
-                            xxx=> conn
-                            xxx=> r
-                            xxx=> method
-                            xxx=> url
-                            xxx=> proto
-                            xxx=> protoMinor
-                            xxx=> protoMajor
-                            xxx=> headers
-                            xxx=> w
-                            */
+
+                            if (url === '/' && method === 'GET') {
+                                this.get('/')
+                                    .then((ctx: any) => {
+                                        console.log('for===>', ctx)
+                                    })
+                            }
+
+                            req.respond({ body: "Hello world html \n" }) // TODO 这个内容外部写入，这个respond接收的参数
+
                         }
+
                     })
             })
         } catch (error) {

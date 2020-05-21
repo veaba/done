@@ -72,6 +72,8 @@ declare function jQuery(domReadyCallback: () => any): any;
 ```
 - declare class 声明全局类
 
+
+- ts 如何在class内部个定时器，然后执行实例的函数，给实例返回参数
 ```ts
 // src/Animal.d.ts
 
