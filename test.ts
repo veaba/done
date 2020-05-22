@@ -6,10 +6,18 @@ const done = new Done() // maybe need some options ...
 // TODO 不要回调了，使用async的方法 
 done.get('/')
     .then((ctx: any) => {
-        console.log("get回调1==>", ctx)
-        ctx.body = "实例过来的body"
-        console.log("get回调2==>", ctx)
+        ctx.body = "Hello World!"
+        // ctx.body = { hello: "world!" }
+        // TODO 返回json
+        // TODO 返回HTML
+        // TODO 返回str
+        // TODO 返回文件解析
+        // TODO 返回下载
+        // TODO 根据类型自动返回，或可指定类型
     })
+
+
+// TODO done.use(router)
 
 done.listen(port)
     .then(() => {

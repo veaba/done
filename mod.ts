@@ -171,24 +171,44 @@ class Done {
         try {
             return new Promise((resolve, reject) => {
                 // TODO  ctx interface
-                const ctx: any = {}
-                ctx.request = { name: "request" }
-                ctx.response = {
-                    send: (sendStr: any) => {
-                        return sendStr + " : TODO send"
-                    }
-                }
+                const _ctx: any = {}
+                _ctx.request = { name: "request" }
+                _ctx.body = ""
+                _ctx.response = {}
                 // TODO 监听body的变化
                 // ctx.body = "I am body"
-                console.log(arguments)
+                const ctx = new Proxy(_ctx, {
+                    get(target, propKey, receiver) {
+                        return Reflect.get(target, propKey, receiver)
+                    },
+                    set(target, propKey, value, receiver): boolean {
+                        console.log('触发send函数,接收到一个回调', value)
+                        return true
+                    }
+                })
                 resolve(ctx)
-                console.log('class 的get==>', ctx)
             })
         } catch (error) {
             // TODO 打印log和控制台提示 
             return Promise.reject(error)
         }
     }
+
+    /**
+     * @desc 路径代理 数据改变处理set回调
+     * @TODO 
+     * 
+    */
+    // private async proxyPath(source: any) {
+    //     return {
+    //          get{
+
+    //          },
+    //          set{
+
+    //          }
+    //     }
+    // },
 
     async listen(port: number) {
         try {
