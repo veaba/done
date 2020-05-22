@@ -140,7 +140,7 @@ class Done {
         this.options = options || {}
         this.version = "0.0.10"
         this.name = "Done"
-        console.log('======>', 'init')
+        console.log('======>', 'Done Class 初始化')
 
         // TODO create a deno std Server
 
@@ -157,8 +157,17 @@ class Done {
 
     }
     // TODO 根据路由路径的不同，配置不同的method，然后返回响应的数据
+    /**
+     * @desc 
+     * @param {string} pathName
+     * @第一种方法，ctx 回调
+     * @第二种defineProperty 帧听
+     * @第三种proxy 帧听
+     * 
+     * @问题 直接赋值快还是入参回调快？
+     * 
+    */
     async get(str: string) {
-        console.log('classs=======>get', str)
         try {
             return new Promise((resolve, reject) => {
                 // TODO  ctx interface
@@ -169,7 +178,11 @@ class Done {
                         return sendStr + " : TODO send"
                     }
                 }
+                // TODO 监听body的变化
+                // ctx.body = "I am body"
+                console.log(arguments)
                 resolve(ctx)
+                console.log('class 的get==>', ctx)
             })
         } catch (error) {
             // TODO 打印log和控制台提示 
@@ -183,30 +196,16 @@ class Done {
                 // TODO create server here
                 await createServer(port)
                     .then(async (ser: any) => {
-                        // TODO 模拟class的方法回调实例的方法
-
-                        setInterval(async () => {
-                            this.get('/')
-                                .then(() => {
-                                    return new Promise((resolve) => {
-                                        return resolve({ a: "22" })
-                                    })
-                                })
-                        }, 3000)
-
                         // TODO 循环给methods使用
                         for await (const req of ser) {
-                            console.log('await===>', this.count++)
                             const { method, url } = req  // TODO {GET}
-                            console.log("method===>", method, url)
-
+                            console.log('==================↓↓↓===================== ==>', this.count++, method, url)
                             if (url === '/' && method === 'GET') {
-                                this.get('/')
-                                    .then((ctx: any) => {
-                                        console.log('for===>', ctx)
-                                    })
+                                const x = await this.get('/')
+                                console.log('x======>', x)
                             }
 
+                            // TODO 无法捕捉到路由和method，将抛出404页面，
                             req.respond({ body: "Hello world html \n" }) // TODO 这个内容外部写入，这个respond接收的参数
 
                         }
