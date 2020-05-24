@@ -114,50 +114,49 @@
 //     }
 // }
 
-
 // isIp
 // proxy
 // parse
 // http
 
-import { createServer } from './src/http/server.ts'
+import { createServer } from "./src/http/server.ts";
 
-import context from "./src/context.ts"
-import request from "./src/request.ts"
-import response from "./src/response.ts"
+import context from "./src/context.ts";
+import request from "./src/request.ts";
+import response from "./src/response.ts";
 class Done {
+  readonly name: string;
+  readonly version: string;
+  public options: any; //TODO options interface
+  public request: object;
+  public response: object;
+  public context: object;
+  public body: string;
+  public count: number;
+  // TODO 假如这是外部传递进来的路由路径和method
+  public routerMethods: object;
+  constructor(options?: any) {
+    this.options = options || {};
+    this.version = "0.0.10";
+    this.name = "Done";
+    console.log("======>", "Done Class 初始化");
 
-    readonly name: string
-    readonly version: string
-    public options: any //TODO options interface
-    public request: object
-    public response: object
-    public context: object
-    public count: number
-    // TODO 假如这是外部传递进来的路由路径和method
-    public routerMethods: object
-    constructor(options?: any) {
-        this.options = options || {}
-        this.version = "0.0.10"
-        this.name = "Done"
-        console.log('======>', 'Done Class 初始化')
+    // TODO create a deno std Server
 
-        // TODO create a deno std Server
-
-        // init 
-        this.context = Object.create(context)
-        this.request = Object.create(request)
-        this.response = Object.create(response)
-        this.count = 0
-        this.routerMethods = {
-            '/': "GET",
-            "favicon": "GET",
-            "about": "GET"
-        }
-
-    }
-    // TODO 根据路由路径的不同，配置不同的method，然后返回响应的数据
-    /**
+    // init
+    this.context = Object.create(context);
+    this.request = Object.create(request);
+    this.response = Object.create(response);
+    this.count = 0;
+    this.body = "";
+    this.routerMethods = {
+      "/": "GET",
+      "favicon": "GET",
+      "about": "GET",
+    };
+  }
+  // TODO 根据路由路径的不同，配置不同的method，然后返回响应的数据
+  /**
      * @desc 
      * @param {string} pathName
      * @第一种方法，ctx 回调
@@ -167,85 +166,94 @@ class Done {
      * @问题 直接赋值快还是入参回调快？
      * 
     */
-    async get(str: string) {
-        try {
-            return new Promise((resolve, reject) => {
-                // TODO  ctx interface
-                const _ctx: any = {}
-                _ctx.request = { name: "request" }
-                _ctx.body = ""
-                _ctx.response = {}
-                // TODO 监听body的变化
-                // ctx.body = "I am body"
-                const ctx = new Proxy(_ctx, {
-                    get(target, propKey, receiver) {
-                        return Reflect.get(target, propKey, receiver)
-                    },
-                    set(target, propKey, value, receiver): boolean {
-                        console.log('触发send函数,接收到一个回调', value)
-                        return true
-                    }
-                })
-                resolve(ctx)
-            })
-        } catch (error) {
-            // TODO 打印log和控制台提示 
-            return Promise.reject(error)
-        }
+  async get(str: string) {
+    const w = this;
+    try {
+      return new Promise((resolve, reject) => {
+        // TODO  ctx interface
+        const _ctx: any = {};
+        _ctx.request = { name: "request" };
+        _ctx.body = "";
+        _ctx.response = {};
+        // TODO 监听body的变化
+        // ctx.body = "I am body"
+        const ctx = new Proxy(_ctx, {
+          get(target, propKey, receiver) {
+            return Reflect.get(target, propKey, receiver);
+          },
+          set(target, propKey, value, receiver): boolean {
+            console.log("触发send函数,接收到一个回调", value);
+            _ctx.body = value;
+            w.body = value;
+            return true;
+          },
+        });
+        resolve(ctx);
+      });
+    } catch (error) {
+      // TODO 打印log和控制台提示
+      return Promise.reject(error);
     }
+  }
 
-    /**
+  /**
      * @desc 路径代理 数据改变处理set回调
      * @TODO 
      * 
     */
-    // private async proxyPath(source: any) {
-    //     return {
-    //          get{
+  // private async proxyPath(source: any) {
+  //     return {
+  //          get{
 
-    //          },
-    //          set{
+  //          },
+  //          set{
 
-    //          }
-    //     }
-    // },
+  //          }
+  //     }
+  // },
 
-    async listen(port: number) {
-        try {
-            return new Promise(async (resolve, reject) => {
-                // TODO create server here
-                await createServer(port)
-                    .then(async (ser: any) => {
-                        // TODO 循环给methods使用
-                        for await (const req of ser) {
-                            const { method, url } = req  // TODO {GET}
-                            console.log('==================↓↓↓===================== ==>', this.count++, method, url)
-                            if (url === '/' && method === 'GET') {
-                                const x = await this.get('/')
-                                console.log('x======>', x)
-                            }
+  async listen(port: number) {
+    try {
+      return new Promise(async (resolve, reject) => {
+        // TODO create server here
+        await createServer(port)
+          .then(async (ser: any) => {
+            // TODO 循环给methods使用
+            for await (const req of ser) {
+              const { method, url } = req; // TODO {GET}
+              console.log(
+                "==================↓↓↓===================== ==>",
+                this.count++,
+                method,
+                url,
+              );
+              if (url === "/" && method === "GET") {
+                req.respond({ body: this.body });
+                const h = await this.get("/");
+                console.log("hhh==>", h);
 
-                            // TODO 无法捕捉到路由和method，将抛出404页面，
-                            req.respond({ body: "Hello world html \n" }) // TODO 这个内容外部写入，这个respond接收的参数
-
-                        }
-
-                    })
-            })
-        } catch (error) {
-            return await Promise.reject(error)
-        }
+                console.log("this===>", this);
+              } else {
+                // TODO 无法捕捉到路由和method，将抛出404页面，
+                //   req.respond({ body: "Hello world html" }); // TODO 这个内容外部写入，这个respond接收的参数
+              }
+            }
+          });
+      });
+    } catch (error) {
+      return await Promise.reject(error);
     }
+  }
 }
 
 export {
-    Done,
-    // Router
-}
+  Done,
+  // Router
+};
 
 interface ReqFn {
-    (req: any, res: any): void
+  (req: any, res: any): void;
 }
 interface Fn {
-    (): void //函数
+  (): void; //函数
 }
