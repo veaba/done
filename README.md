@@ -22,9 +22,10 @@ const done = new Done() // maybe need some options ...
 console.log('done 实例==>', done)
 // TODO 不要回调了，使用async的方法 
 done.get('/',(ctx:any)=>{
- const { response = {} } = ctx || {}
-        const text = response.send("hello world")
-  })
+  ctx.body="Hello world!"         // 支持string
+  // ctx.body = {hello:"world"}   // 支持 json
+  // ctx.body = 2020              // 支持 number
+})
 
 done.listen(9999)
     .then(() => {
@@ -248,3 +249,40 @@ console.log('encode==>xxx==>', x)
 const y = decoder.decode(x)
 console.log('decode==>yyy==>', y)
 ```
+
+## Header Content-Type
+
+- text: `text/plain`
+- multipart: `multipart/mixed`
+- application: `application/octet-stream`、`application/json`
+- message: E-mail 
+- image: 静态图片
+- audio: 音频数据
+- video: 视频
+
+## TODO LIST
+
+|feat | 描述 |
+|-----|------|
+|Router||
+|get||
+|post||
+|put||
+|res:image||
+|res:audio||
+|res:video||
+|res:js||
+|res:css||
+|res:file||
+|res:download file||
+|https||
+|http2||
+|res:json|[x]|
+|res:string|[x]|
+|res:array|[x]|
+|res:object||
+|res:jsonp||
+|res:blob||
+|res:binay||
+|res:stream||
+|res:websocket||

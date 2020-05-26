@@ -119,10 +119,8 @@ class Done {
   request: object;
   response: object;
   context: any;
-  body: string;
   count: number;
-  // TODO 假如这是外部传递进来的路由路径和method
-  routerMethods: object;
+  routerMethods: object; // TODO 假如这是外部传递进来的路由路径和method
   middleware: any[];
   fns: any[]; // todo 收集methods 第二个回调参数的方法
   constructor(options?: any) {
@@ -139,7 +137,6 @@ class Done {
     this.response = Object.create(response);
     this.middleware = [];
     this.count = 0;
-    this.body = "";
     this.routerMethods = {
       "/": "GET",
       "favicon": "GET",
@@ -149,35 +146,35 @@ class Done {
   }
   // TODO 根据路由路径的不同，配置不同的method，然后返回响应的数据
   /**
-       * @desc 
-       * @param {string} pathName
-       * @1 第一种方法，ctx 回调
-       * @2 第二种defineProperty 帧听
-       * @3 第三种proxy 帧听
-       * 
-       * @问题 直接赋值快还是入参回调快？
-       * 
-      */
+   * @desc 
+   * @param {string} pathName
+   * @1 第一种方法，ctx 回调
+   * @2 第二种defineProperty 帧听
+   * @3 第三种proxy 帧听
+   * 
+   * @问题 直接赋值快还是入参回调快？
+   * 
+  */
   async get(str: string, fn?: any) {
+    console.log('Class 里的 get')
     const _ctx: any = {};
     const _this = this
     _ctx.request = { name: "request" };
     _ctx.body = "";
     _ctx.response = {};
     // TODO 监听body的变化
-    const ctx = new Proxy(_ctx, {
-      get(target, propKey, receiver) {
-        return Reflect.get(target, propKey, receiver);
-      },
-      set(target, propKey, value, receiver): boolean {
-        console.log("触发send函数,接收到一个回调", value);
-        _ctx.body = value;
-        return true;
-      },
-    });
+    // const ctx = new Proxy(_ctx, {
+    //   get(target, propKey, receiver) {
+    //     return Reflect.get(target, propKey, receiver);
+    //   },
+    //   set(target, propKey, value, receiver): boolean {
+    //     console.log("触发send函数,接收到一个回调", value);
+    //     _ctx.body = value;
+    //     return true;
+    //   },
+    // });
 
     fn(_ctx)
-    this.body = _ctx.body
     this.fns.push(fn)
     this.context = _ctx
   }
@@ -201,22 +198,28 @@ class Done {
   async listen(port: number) {
     try {
       return new Promise(async (resolve, reject) => {
-        // TODO create server here
         await createServer(port)
           .then(async (ser: any) => {
             // TODO 循环给methods使用
             for await (const req of ser) {
               const { method, url } = req; // TODO {GET}
-              // TODO 执行实例的方法
+              let body = this.context.body || "没有任何内容！"
               if (url === "/" && method === "GET") {
-                console.log('实例==>', this)
-                console.log("fns=====>", this.fns);
+                console.log('=====↑↑ 实例==>', this)
+                // console.log("fns=====>", this.fns);
                 this.fns[0] && this.fns[0](this.context); // TODO 触发回调
+                let contentType = 'text/html;charset=utf-8'
+                if (typeof body === 'object') {
+                  contentType = 'application/json;charset=utf-8'
+                  body = JSON.stringify(body)
+                } else body = String(body) // TODO 可能存在其他类型，比如图片、blog、二进制文件等等
+
                 const headers = new Headers({
-                  "Content-Type": "text/html;charset=utf-8"
+                  "content-Type": contentType,
+                  "server": "Deno/1.0.2;power done"
                 })
                 req.respond({
-                  body: this.context.body || "没有任何内容！",
+                  body,
                   headers
                 });
               } else {

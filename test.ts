@@ -9,9 +9,13 @@ const done = new Done(); // maybe need some options ...
 // TODO 不要回调了，使用async的方法
 done.get("/", (ctx: any) => {
   const date = new Date();
-  ctx.body = "Hello World! F5 try" + new Date();
-  console.log("=====>Get什么？", date);
-  console.log('=====实例回调====>\n', ctx)
+  // ctx.body = "【F5 try】 Hello World! " + new Date()+' ===> ：' +new Date().getTime();
+  const jsonObj = {
+    hello: "world" + date.getTime()
+  }
+  ctx.body = 2020
+  // ctx.body = JSON.stringify(jsonObj)
+  console.log('=====↓↓ 实例回调====>\n', ctx)
   // ctx.body = { hello: "world!" }
   // TODO 返回json
   // TODO 返回HTML
