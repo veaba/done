@@ -260,7 +260,7 @@ console.log('decode==>yyy==>', y)
 - audio: 音频数据
 - video: 视频
 
-## TODO LIST
+## TODO LIST、feature
 
 |feat | 描述 |
 |-----|------|
@@ -277,12 +277,13 @@ console.log('decode==>yyy==>', y)
 |res:download file||
 |https||
 |http2||
-|res:json|[x]|
-|res:string|[x]|
-|res:array|[x]|
+|res:json|√|
+|res:string|√|
+|res:array|√|
 |res:object||
 |res:jsonp||
 |res:blob||
 |res:binay||
 |res:stream||
 |res:websocket||
+|set headers||

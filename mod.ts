@@ -156,7 +156,6 @@ class Done {
    * 
   */
   async get(str: string, fn?: any) {
-    console.log('Class 里的 get')
     const _ctx: any = {};
     const _this = this
     _ctx.request = { name: "request" };
@@ -174,7 +173,7 @@ class Done {
     //   },
     // });
 
-    fn(_ctx)
+    fn && fn(_ctx)    // callback
     this.fns.push(fn)
     this.context = _ctx
   }
@@ -201,19 +200,23 @@ class Done {
         await createServer(port)
           .then(async (ser: any) => {
             // TODO 循环给methods使用
+            // TODO 这里的this.content 必须是单独的实例！！
+            // TODO 能获取到this.get 的第二参数的入参吗？
+            // TODO 多线程的创建实例？
             for await (const req of ser) {
               const { method, url } = req; // TODO {GET}
               let body = this.context.body || "没有任何内容！"
+              let contentType = 'text/html;charset=utf-8'
+              if (typeof body === 'object') {
+                contentType = 'application/json;charset=utf-8'
+                body = JSON.stringify(body)
+              } else body = String(body) // TODO 可能存在其他类型，比如图片、blob、二进制文件等等
+
+
               if (url === "/" && method === "GET") {
-                console.log('=====↑↑ 实例==>', this)
+                console.log('\n主页 ======= ↓↓ 实例=======>\n', this.context, this.fns, '\n主页 ======= ↑↑ =========\n')
                 // console.log("fns=====>", this.fns);
                 this.fns[0] && this.fns[0](this.context); // TODO 触发回调
-                let contentType = 'text/html;charset=utf-8'
-                if (typeof body === 'object') {
-                  contentType = 'application/json;charset=utf-8'
-                  body = JSON.stringify(body)
-                } else body = String(body) // TODO 可能存在其他类型，比如图片、blog、二进制文件等等
-
                 const headers = new Headers({
                   "content-Type": contentType,
                   "server": "Deno/1.0.2;power done"
@@ -222,7 +225,20 @@ class Done {
                   body,
                   headers
                 });
-              } else {
+              }
+              else if (url === '/about' && method === 'GET') {
+                console.log('\nAbout ======= ↓↓ 实例=======>\n', this.context, this.fns, '\nAbout ======= ↑↑ =========\n')
+                this.fns[1] && this.fns[1](this.context);
+                const headers = new Headers({
+                  "content-Type": contentType,
+                  "server": "Deno/1.0.2;power done"
+                })
+                req.respond({
+                  body,
+                  headers
+                });
+              }
+              else {
                 // TODO 无法捕捉到路由和method，将抛出404页面，
                 // TODO 这个内容外部写入，这个respond接收的参数
                 req.respond({ body: "404 Error :)" })
