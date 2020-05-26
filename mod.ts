@@ -115,14 +115,14 @@ import response from "./src/response.ts";
 class Done {
   readonly name: string;
   readonly version: string;
-  public options: any; //TODO options interface
-  public request: object;
-  public response: object;
-  public context: object;
-  public body: string;
-  public count: number;
+  options: any; //TODO options interface
+  request: object;
+  response: object;
+  context: any;
+  body: string;
+  count: number;
   // TODO 假如这是外部传递进来的路由路径和method
-  public routerMethods: object;
+  routerMethods: object;
   middleware: any[];
   fns: any[]; // todo 收集methods 第二个回调参数的方法
   constructor(options?: any) {
@@ -159,26 +159,27 @@ class Done {
        * 
       */
   async get(str: string, fn?: any) {
-    // const _ctx: any = {};
-    // _ctx.request = { name: "request" };
-    // _ctx.body = "";
-    // _ctx.response = {};
-    // // TODO 监听body的变化
-    // // ctx.body = "I am body"
-    // const ctx = new Proxy(_ctx, {
-    //     get(target, propKey, receiver) {
-    //         return Reflect.get(target, propKey, receiver);
-    //     },
-    //     set(target, propKey, value, receiver): boolean {
-    //         console.log("触发send函数,接收到一个回调", value);
-    //         _ctx.body = value;
-    //         return true;
-    //     },
-    // });
+    const _ctx: any = {};
+    const _this = this
+    _ctx.request = { name: "request" };
+    _ctx.body = "";
+    _ctx.response = {};
+    // TODO 监听body的变化
+    const ctx = new Proxy(_ctx, {
+      get(target, propKey, receiver) {
+        return Reflect.get(target, propKey, receiver);
+      },
+      set(target, propKey, value, receiver): boolean {
+        console.log("触发send函数,接收到一个回调", value);
+        _ctx.body = value;
+        return true;
+      },
+    });
 
-    // fn(_ctx)
-    // this.fns.push(fn)
-    // this.context = _ctx
+    fn(_ctx)
+    this.body = _ctx.body
+    this.fns.push(fn)
+    this.context = _ctx
   }
 
   /**
@@ -206,27 +207,22 @@ class Done {
             // TODO 循环给methods使用
             for await (const req of ser) {
               const { method, url } = req; // TODO {GET}
-              console.log(
-                "==================↓↓↓===================== ==>",
-                this.count++,
-                method,
-                url,
-              );
               // TODO 执行实例的方法
               if (url === "/" && method === "GET") {
+                console.log('实例==>', this)
                 console.log("fns=====>", this.fns);
-                this.fns[0] && this.fns[0](this.context);
+                this.fns[0] && this.fns[0](this.context); // TODO 触发回调
                 const headers = new Headers({
                   "Content-Type": "text/html;charset=utf-8"
                 })
                 req.respond({
-                  body: this.body || "没有任何内容！",
+                  body: this.context.body || "没有任何内容！",
                   headers
                 });
               } else {
                 // TODO 无法捕捉到路由和method，将抛出404页面，
                 // TODO 这个内容外部写入，这个respond接收的参数
-                req.respond({body:"404 Error :)"})
+                req.respond({ body: "404 Error :)" })
               }
             }
           });
