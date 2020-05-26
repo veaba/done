@@ -212,20 +212,12 @@ class Done {
                 method,
                 url,
               );
+              // TODO 执行实例的方法
               if (url === "/" && method === "GET") {
                 console.log("fns=====>", this.fns);
                 this.fns[0] && this.fns[0](this.context);
-                // TODO 实例回调
-                // req.headers["Content-Type"] = "text/html;charset=utf-8";
-                console.log("111-headers==>\n", req.headers);
-                req.headers.set("Content-Type", "text/html;charset=utf-8");
-                console.log("222-headers==>\n", req.headers);
-                // 这样的设置是没问题，但尚未生效 
-                // https://github.com/denoland/deno/blob/master/std/http/_io.ts#L238-L250 这块代码有问题
-                // req.headers=new Headers()
-                // req.headers.set("Content-Type", "text/html;charset=utf-8");
-                const headers=new Headers({
-                    "Content-Type":"text/html;charset=utf-8"
+                const headers = new Headers({
+                  "Content-Type": "text/html;charset=utf-8"
                 })
                 req.respond({
                   body: this.body || "没有任何内容！",
@@ -233,7 +225,8 @@ class Done {
                 });
               } else {
                 // TODO 无法捕捉到路由和method，将抛出404页面，
-                //   req.respond({ body: "Hello world html" }); // TODO 这个内容外部写入，这个respond接收的参数
+                // TODO 这个内容外部写入，这个respond接收的参数
+                req.respond({body:"404 Error :)"})
               }
             }
           });

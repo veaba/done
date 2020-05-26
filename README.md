@@ -57,7 +57,7 @@ declare module xx{
   - module
   - declare
 
-- 另外。某些情况下 <T> 是什么鬼
+- `<T>` 
 - extends   用法
 - super     用法
 
@@ -98,7 +98,10 @@ declare class Animal {
 - declare module 扩展模块
 - /// <reference /> 三斜线指令
 
-
+- 如何调用Deno内置方法
+``` ts
+const listen = Deno.listen
+```
 
 ## class 声明
 
@@ -107,8 +110,8 @@ declare class Animal {
 - public    默认
 - private   可以被继承，无法在实例中访问
 - protected 类似private 构造函数是protected，无法实例化，只能被继承
-- readonly  只读熟悉，无法被修改clone
-- static    静态熟悉，在类内部使用时需加类名，无法被实例访问，
+- readonly  只读属性，无法被修改clone
+- static    静态属性，在类内部使用时需加类名，无法被实例访问，
 
 
 ## ts 与es 的箭头函数
@@ -138,12 +141,7 @@ const he = cool('/abs', (z, x) => {
 ## TODO: 如何测试框架性能？
 
 - string 和 其他类型的处理速度
-- 不使用函数作为回调，而使用proxy，循环100、1000次对比，均三倍运行速度优于函数回调
-
-## TODO: 如何调用Deno内置方法
-
-error: TS1141 [ERROR]: String literal expected.
-import { listen } from Deno
+- 不使用函数作为回调，而使用proxy。经过测试，循环100、1000次对比，均三倍运行速度优于函数回调
 
 ## TODO: koa 路由输入 （洋葱模型）
 
@@ -230,13 +228,11 @@ ServerRequest {
 
 ```ts
 // haha,要new 实例
- const headers=new Headers({
-                    "Content-Type":"text/html;charset=utf-8"
-                })
-                req.respond({
-                  body: this.body || "没有任何内容！",
-                  headers
-                });
+const headers=new Headers({"Content-Type":"text/html;charset=utf-8"})
+req.respond({
+  body: this.body || "没有任何内容！",
+  headers
+});
 ```
 
 ## Deno 编码解码
