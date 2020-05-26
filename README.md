@@ -7,7 +7,7 @@
 现在只是非常的基础，在原标准库 `http/server.ts` 里面再做一次封装
 
 预期
-  - 使用最底层的库，从新封装一层才好
+  - 使用最底层的库，从新封装一层才好(现在使用标准库)
 
 ## 警告！这是一个练手的demo
 
@@ -21,11 +21,10 @@ import { Done } from 'https://raw.githubusercontent.com/veaba/done/master/mod.ts
 const done = new Done() // maybe need some options ...
 console.log('done 实例==>', done)
 // TODO 不要回调了，使用async的方法 
-done.get('/')
-    .then((ctx: any) => {
-        const { response = {} } = ctx || {}
+done.get('/',(ctx:any)=>{
+ const { response = {} } = ctx || {}
         const text = response.send("hello world")
-    })
+  })
 
 done.listen(9999)
     .then(() => {
@@ -48,6 +47,8 @@ declare module xx{
 - xx.d.ts 怎么用
 - /// 三斜线的用法
 
+- 每次更新后，更新一下实例的get
+解决办法：回调
 
 - TODO 应该如何更好的定义一个class 的形状
   - interface
@@ -96,6 +97,8 @@ declare class Animal {
 - declare global 扩展全局变量
 - declare module 扩展模块
 - /// <reference /> 三斜线指令
+
+
 
 ## class 声明
 
@@ -223,8 +226,6 @@ ServerRequest {
 
 ```
 
-## TODO 每次更新后，更新一下实例的get
-
 ## 设置headers
 
 ```ts
@@ -236,4 +237,18 @@ ServerRequest {
                   body: this.body || "没有任何内容！",
                   headers
                 });
+```
+
+## Deno 编码解码
+
+```ts
+const str = "Hello world 世界"
+const encoder = new TextEncoder()
+const decoder = new TextDecoder()
+
+const x = encoder.encode(str)
+
+console.log('encode==>xxx==>', x)
+const y = decoder.decode(x)
+console.log('decode==>yyy==>', y)
 ```
