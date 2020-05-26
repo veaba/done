@@ -225,5 +225,15 @@ ServerRequest {
 
 ## TODO 每次更新后，更新一下实例的get
 
-## TODO deno 官方的源码有些问题吧，不允许设置headers
-需要参考下这个Repo https://github.com/zhmushan/abc
+## 设置headers
+
+```ts
+// haha,要new 实例
+ const headers=new Headers({
+                    "Content-Type":"text/html;charset=utf-8"
+                })
+                req.respond({
+                  body: this.body || "没有任何内容！",
+                  headers
+                });
+```

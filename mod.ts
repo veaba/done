@@ -224,8 +224,12 @@ class Done {
                 // https://github.com/denoland/deno/blob/master/std/http/_io.ts#L238-L250 这块代码有问题
                 // req.headers=new Headers()
                 // req.headers.set("Content-Type", "text/html;charset=utf-8");
+                const headers=new Headers({
+                    "Content-Type":"text/html;charset=utf-8"
+                })
                 req.respond({
                   body: this.body || "没有任何内容！",
+                  headers
                 });
               } else {
                 // TODO 无法捕捉到路由和method，将抛出404页面，
