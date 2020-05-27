@@ -109,16 +109,13 @@
 
 import { createServer } from "./src/http/server.ts";
 
-import context from "./src/context.ts";
+import { Context } from "./src/context.ts";
 import request from "./src/request.ts";
 import response from "./src/response.ts";
 class Done {
   readonly name: string;
   readonly version: string;
   options: any; //TODO options interface
-  request: object;
-  response: object;
-  context: any;
   count: number;
   routerMethods: object; // TODO 假如这是外部传递进来的路由路径和method
   middleware: any[];
@@ -128,13 +125,7 @@ class Done {
     this.version = "0.0.10";
     this.name = "Done";
     console.log("======>", "Done Class 初始化");
-
-    // TODO create a deno std Server
-
     // init
-    this.context = Object.create(context);
-    this.request = Object.create(request);
-    this.response = Object.create(response);
     this.middleware = [];
     this.count = 0;
     this.routerMethods = {
@@ -156,56 +147,23 @@ class Done {
    * 
   */
   async get(str: string, fn?: any) {
-    const _ctx: any = {};
-    const _this = this
-    _ctx.request = { name: "request" };
-    _ctx.body = "";
-    _ctx.response = {};
-    // TODO 监听body的变化
-    // const ctx = new Proxy(_ctx, {
-    //   get(target, propKey, receiver) {
-    //     return Reflect.get(target, propKey, receiver);
-    //   },
-    //   set(target, propKey, value, receiver): boolean {
-    //     console.log("触发send函数,接收到一个回调", value);
-    //     _ctx.body = value;
-    //     return true;
-    //   },
-    // });
-
+    const _ctx: any = new Context()
     fn && fn(_ctx)    // callback
     this.fns.push(fn)
-    this.context = _ctx
+    return _ctx
   }
-
-  /**
-       * @desc 路径代理 数据改变处理set回调
-       * @TODO 
-       * 
-      */
-  // private async proxyPath(source: any) {
-  //     return {
-  //          get{
-
-  //          },
-  //          set{
-
-  //          }
-  //     }
-  // },
-
   async listen(port: number) {
     try {
       return new Promise(async (resolve, reject) => {
         await createServer(port)
           .then(async (ser: any) => {
             // TODO 循环给methods使用
-            // TODO 这里的this.content 必须是单独的实例！！
+            // TODO 这里的this.content 必须是单独的实例！！通过new  Context()
             // TODO 能获取到this.get 的第二参数的入参吗？
             // TODO 多线程的创建实例？
             for await (const req of ser) {
               const { method, url } = req; // TODO {GET}
-              let body = this.context.body || "没有任何内容！"
+              let body = "没有任何内容！" // TODO 这里的body 从哪里取？
               let contentType = 'text/html;charset=utf-8'
               if (typeof body === 'object') {
                 contentType = 'application/json;charset=utf-8'
@@ -214,9 +172,8 @@ class Done {
 
 
               if (url === "/" && method === "GET") {
-                console.log('\n主页 ======= ↓↓ 实例=======>\n', this.context, this.fns, '\n主页 ======= ↑↑ =========\n')
                 // console.log("fns=====>", this.fns);
-                this.fns[0] && this.fns[0](this.context); // TODO 触发回调
+                this.fns[0] && this.fns[0]({}); // TODO 触发回调
                 const headers = new Headers({
                   "content-Type": contentType,
                   "server": "Deno/1.0.2;power done"
@@ -227,8 +184,7 @@ class Done {
                 });
               }
               else if (url === '/about' && method === 'GET') {
-                console.log('\nAbout ======= ↓↓ 实例=======>\n', this.context, this.fns, '\nAbout ======= ↑↑ =========\n')
-                this.fns[1] && this.fns[1](this.context);
+                this.fns[1] && this.fns[1]({}); // TODO 如何获取这个参数
                 const headers = new Headers({
                   "content-Type": contentType,
                   "server": "Deno/1.0.2;power done"
