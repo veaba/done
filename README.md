@@ -37,6 +37,7 @@ done.listen(9999)
 ## 疑问
 
 - 需要理解use 的中间期间设计理念
+- 使用一个中间期间数组去遍历执行完回调函数
 - declare 用法是什么
 ```typescript
 // declare 用法是什么
@@ -70,7 +71,7 @@ declare module xx{
   - 全局修改模式,let、const（常用）
   - 仅用于声明，勿具体实现代码逻辑
 - declare function 声明全局方法
-```js
+```ts
 declare function jQuery(domReadyCallback: () => any): any;
 ```
 - declare class 声明全局类
@@ -165,7 +166,7 @@ if (ctx.request.path == '/about') {
 
 ## TODO: deno 返回的req
 
-```js
+```text
 
 ServerRequest {
  done: Promise { <pending> },
@@ -231,6 +232,7 @@ ServerRequest {
 ```ts
 // haha,要new 实例
 const headers=new Headers({"Content-Type":"text/html;charset=utf-8"})
+const req={respond:(x)=>x}
 req.respond({
   body: this.body || "没有任何内容！",
   headers

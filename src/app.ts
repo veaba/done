@@ -115,6 +115,10 @@
 import {createServer} from "./http/server.ts";
 import {ServerRequest} from "./lib/std.ts"
 import {Context} from "./context.ts";
+import {compose} from "./middleware.ts";
+
+
+export type State = Record<string | number | symbol, any>;
 
 export class Done {
     readonly name: string;
@@ -122,14 +126,14 @@ export class Done {
     options: any; //TODO options interface
     count: number;
     routerMethods: object; // TODO 假如这是外部传递进来的路由路径和method
-    middleware: any[];
+    #middleware: any[];
     fns: any[]; // todo 收集methods 第二个回调参数的方法
     constructor(options?: any) {
         this.options = options || {};
         this.version = "0.0.10";
         this.name = "Done";
         // init
-        this.middleware = [];
+        this.#middleware = [];
         this.count = 0;
         this.routerMethods = {
             "/": "GET",
@@ -161,8 +165,14 @@ export class Done {
                         // TODO 这里的this.content 必须是单独的实例！！通过new  Context()
                         // TODO 能获取到this.get 的第二参数的入参吗？
                         // TODO 多线程的创建实例？
+
+                        // TODO 先走完middleware
+
+                        const middleware = compose(this.#middleware)
                         for await (const req of ser) {
-                            await this.#requestHandler(req)
+                            await this.#requestHandler(req, {
+                                middleware
+                            })
                         }
                     });
             });
@@ -175,8 +185,11 @@ export class Done {
      * @desc Handler each request.
      * @TODO 1 为什么这里的header 在实例上？先打印Context 的实例
      * */
-    #requestHandler = async (request: ServerRequest) => {
+    #requestHandler = async (request: ServerRequest, state: {
+        middleware: (context: Context) => Promise<void>;
+    }) => {
         const context = new Context(this, request)
+        await state.middleware(context)
         const x = context.response.toServerResponse()
         console.info('xxx=>', x);
         await request.respond(x)
@@ -192,7 +205,7 @@ export class Done {
             throw new TypeError("Middleware must be a function!");
         }
         // TODO koa has a debug, what is mean?
-        this.middleware.push(fn)
+        this.#middleware.push(fn)
         // return this as Done<any> // TODO Type 'Done' is not generic.
         return this
     }
