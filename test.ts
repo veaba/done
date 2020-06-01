@@ -15,14 +15,20 @@ const done = new Done(); // maybe need some options ...
 //   `
 // })
 
+done.use((ctx: any) => {
+    ctx.response.body = "Hello world!";
+    console.info('Why ????');
+})
+
 // TODO done.use(router)
 
 
-done.listen(port)
-    .then(() => {
-        console.log(`Start Done server on port ${port}`);
-    });
+// done.listen(port)
+//     .then(() => {
+//         console.log(`Start Done server on port ${port}`);
+//     });
 
+await done.listen(port)
 
 // ctx.body = JSON.stringify(jsonObj)
 // ctx.body = { hello: "world!" }

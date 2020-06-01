@@ -36,11 +36,10 @@ export class Response {
 
     toServerResponse(): ServerResponse {
         if (this.#serverResponse) return this.#serverResponse
-
         const body = this.#getBody()
 
         // TODO setContentType
-
+        console.info('body==>', body);
         const headers = this.#headers
         if (!(body) || headers.has('Content-type') ||
             headers.has('Content-Length')
@@ -61,20 +60,34 @@ export class Response {
      * @return Uint8Array|Deno.Reader
      * */
     #getBody = (): Uint8Array | Deno.Reader | undefined => {
-        const typeBody = typeOf(this.#body)
+        const typeBody = typeOf(this.body) // TODO BUG 为什么这里的body 是undefined
+
+        console.info('Body==>', this.body);
+        console.info('typeBody==>', typeBody);
         let coverBody: Uint8Array | Deno.Reader | undefined
         if (BODY_TYPES.includes(typeBody)) {
-            const bodyText = String(this.#body)
+            const bodyText = String(this.body)
             coverBody = encode(bodyText) // TODO 需要encoder.encode吗？
             this.#type = this.#type || (isHTML(bodyText) ? "html" : "text/plain")
         } else if (this.#body instanceof Uint8Array || isReader(this.#body)) {
-            coverBody = this.#body
-        } else if (typeOf(this.#body) === "object") {
+            coverBody = this.body
+        } else if (typeOf(this.body) === "object") {
             coverBody = encode(JSON.stringify(this.#body))
         } else if (this.#body) {
             throw new TypeError("Response body is set, but count not conver")
         }
         return coverBody
+    }
+
+    get body(): any {
+        return this.#body;
+    }
+
+    // TODO bug 没有触发事件
+    set body(data: any) {
+        console.info('set body===>', data);
+        // TODO
+        this.#body = data
     }
 }
 

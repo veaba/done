@@ -8,7 +8,7 @@
 
 预期
   - 使用最底层的库，从新封装一层才好(现在使用标准库)
-
+  - 吸收了`oak`、 `koa`的特性
 ## 警告！这是一个练手的demo
 
 > deno run --allow-net app.ts
@@ -36,6 +36,7 @@ done.listen(9999)
 
 ## 疑问
 
+- 需要理解use 的中间期间设计理念
 - declare 用法是什么
 ```typescript
 // declare 用法是什么

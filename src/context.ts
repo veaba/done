@@ -14,7 +14,7 @@ export class Context {
         this.app = app
         this.request = new Request(serverRequest)
         this.response = new Response(this.request)
-        this.headers = new Headers()
+        this.headers = new Headers({"server":"Deno/1.0.2; Power done"})
         // TODO cookies ?
     }
 }

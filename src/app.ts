@@ -128,7 +128,6 @@ export class Done {
         this.options = options || {};
         this.version = "0.0.10";
         this.name = "Done";
-        console.log("======>", "Done Class 初始化");
         // init
         this.middleware = [];
         this.count = 0;
@@ -174,26 +173,39 @@ export class Done {
 
     /**
      * @desc Handler each request.
+     * @TODO 1 为什么这里的header 在实例上？先打印Context 的实例
      * */
     #requestHandler = async (request: ServerRequest) => {
         const context = new Context(this, request)
-        console.info('boom ￥%%===>', context);
-        await request.respond(context.response.toServerResponse())
+        const x = context.response.toServerResponse()
+        console.info('xxx=>', x);
+        await request.respond(x)
     }
 
     /**
      * @desc Use the given middleware `fn`
-     * @
+     * @TODO 如何这里呢？
      */
-    use(fn: void) {
+    use(fn: any) {
         // TODO
         if (typeof fn !== "function") {
             throw new TypeError("Middleware must be a function!");
         }
         // TODO koa has a debug, what is mean?
-        this.middleware = [];
-        return this;
+        this.middleware.push(fn)
+        // return this as Done<any> // TODO Type 'Done' is not generic.
+        return this
     }
+
+
+    /** Register middleware to be used with the application.
+     use<S extends State = AS>(
+     ...middleware: Middleware<S, Context<S>>[]
+     ): Application<S extends AS ? S : (S & AS)> {
+        this.#middleware.push(...middleware);
+        return this as Application<any>;
+    }
+     */
 
     // I don't want to use callback
 }
