@@ -1,12 +1,15 @@
 /**
  * @desc
  * @copyright 2020 veaba
- * 
-*/
+ *
+ */
+import {ServerRequest} from "./lib/std.ts"
 
-export default class Request {
-    constructor() {
+export class Request {
+    #serverRequest: ServerRequest
 
+    constructor(serverRequest: ServerRequest) {
+        this.#serverRequest = serverRequest
     }
 }
 
@@ -15,7 +18,7 @@ export default class Request {
 
 //     },
 
-//     // TODO get header 
+//     // TODO get header
 //     // TODO set header
 //     headers() {
 
