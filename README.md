@@ -9,6 +9,46 @@
 预期
   - 使用最底层的库，从新封装一层才好(现在使用标准库)
   - 吸收了`oak`、 `koa`的特性
+  - 参考:
+    - [oak](https://github.com/oakserver/oak)
+    - [koa](https://github.com/koajs/koa)
+    - [fastity](https://github.com/fastify/fastify)
+    
+## 优化指标
+- TODO 使用`fast-json-stringify` 替换原生的`JSON.stringify()`
+- TODO radix-tree 来处理router，见 https://github.com/delvedor/find-my-way
+- TODO [使用样式重用对象和函数](https://github.com/mcollina/reusify)
+- TODO 闭包问题，避免嵌套闭包
+  - [see](https://mcollina.github.io/take-your-http-server-to-ludicrous-speed/#34)
+
+bad
+```js
+function process (bigdata, cb) {
+  remoteCall(bigdata, function (err, something) {
+    storeSomething(something, function (err, res) {
+      // this function is short-lived and hard to optimize
+      // bigdata is still in scope!
+      cb(null, res * 2)
+    })
+  })
+}
+```
+
+good
+```js
+function process (bigdata, cb) {
+  remoteCall(bigdata, function (err, something) {
+    // bigdata exits scope here
+    callStoreSomething(something, cb)
+  })
+}
+function callStoreSomething(something, cb) {
+  /* this function can be optimized! */
+  storeSomething(something, function (err, res) {
+    cb(null, res * 2)
+  })
+}
+```
 ## 警告！这是一个练手的demo
 
 > deno run --allow-net app.ts

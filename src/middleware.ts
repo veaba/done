@@ -29,7 +29,6 @@ export function  compose<
             if (i === middleware.length) {
                 fn = next;
             }
-            console.info('haha');
             if (!fn) {
                 return Promise.resolve();
             }
