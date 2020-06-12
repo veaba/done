@@ -17,6 +17,8 @@ const done = new Done(); // maybe need some options ...
 
 done.use((ctx: any) => {
     ctx.response.body = "Hello world!";
+    // ctx.response.headers.set('Content-Type', 'text/plain')
+    // console.info('instance callback');
 })
 
 // TODO done.use(router)

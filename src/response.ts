@@ -37,7 +37,6 @@ export class Response {
     toServerResponse(): ServerResponse {
         if (this.#serverResponse) return this.#serverResponse
         const body = this.#getBody()
-
         // TODO setContentType
         const headers = this.#headers
         if (!(body) || headers.has('Content-type') ||
@@ -81,7 +80,6 @@ export class Response {
 
     // TODO bug 没有触发事件
     set body(data: any) {
-        console.info('set body===>', data);
         // TODO
         this.#body = data
     }

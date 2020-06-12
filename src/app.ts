@@ -192,7 +192,6 @@ export class Done {
         const context = new Context(this, request)
         await state.middleware(context)
         const x = context.response.toServerResponse()
-        console.info('xxx=>', x);
         await request.respond(x)
     }
 
