@@ -39,7 +39,6 @@ export class Response {
         const body = this.#getBody()
 
         // TODO setContentType
-        console.info('body==>', body);
         const headers = this.#headers
         if (!(body) || headers.has('Content-type') ||
             headers.has('Content-Length')
@@ -61,9 +60,6 @@ export class Response {
      * */
     #getBody = (): Uint8Array | Deno.Reader | undefined => {
         const typeBody = typeOf(this.body) // TODO BUG 为什么这里的body 是undefined
-
-        console.info('Body==>', this.body);
-        console.info('typeBody==>', typeBody);
         let coverBody: Uint8Array | Deno.Reader | undefined
         if (BODY_TYPES.includes(typeBody)) {
             const bodyText = String(this.body)

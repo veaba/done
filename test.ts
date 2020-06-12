@@ -17,7 +17,6 @@ const done = new Done(); // maybe need some options ...
 
 done.use((ctx: any) => {
     ctx.response.body = "Hello world!";
-    console.info('Why ????');
 })
 
 // TODO done.use(router)

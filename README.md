@@ -9,6 +9,38 @@
 预期
   - 使用最底层的库，从新封装一层才好(现在使用标准库)
   - 吸收了`oak`、 `koa`的特性
+  
+  
+## TODO LIST、feature
+
+|feat | 描述 |
+|-----|------|
+|Router||
+|get||
+|post||
+|put||
+|res:image||
+|res:audio||
+|res:video||
+|res:js||
+|res:css||
+|res:file||
+|res:download file||
+|https||
+|http2||
+|res:json|√|
+|res:string|√|
+|res:array|√|
+|res:object||
+|res:jsonp||
+|res:blob||
+|res:binay||
+|res:stream||
+|res:websocket||
+|set headers||
+|redirect||
+|throw http code||
+  
 ## 警告！这是一个练手的demo
 
 > deno run --allow-net app.ts
@@ -22,9 +54,9 @@ const done = new Done() // maybe need some options ...
 console.log('done 实例==>', done)
 // TODO 不要回调了，使用async的方法 
 done.get('/',(ctx:any)=>{
-  ctx.body="Hello world!"         // 支持string
-  // ctx.body = {hello:"world"}   // 支持 json
-  // ctx.body = 2020              // 支持 number
+  ctx.response.body="Hello world!"          // 支持string
+  // ctx.body = {hello:"world"}             // 支持 json
+  // ctx.body = 2020                        // 支持 number
 })
 
 done.listen(9999)
@@ -262,31 +294,3 @@ console.log('decode==>yyy==>', y)
 - image: 静态图片
 - audio: 音频数据
 - video: 视频
-
-## TODO LIST、feature
-
-|feat | 描述 |
-|-----|------|
-|Router||
-|get||
-|post||
-|put||
-|res:image||
-|res:audio||
-|res:video||
-|res:js||
-|res:css||
-|res:file||
-|res:download file||
-|https||
-|http2||
-|res:json|√|
-|res:string|√|
-|res:array|√|
-|res:object||
-|res:jsonp||
-|res:blob||
-|res:binay||
-|res:stream||
-|res:websocket||
-|set headers||

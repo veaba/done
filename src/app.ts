@@ -169,6 +169,7 @@ export class Done {
                         // TODO 先走完middleware
 
                         const middleware = compose(this.#middleware)
+                        console.info('compose-middleware===>',middleware);
                         for await (const req of ser) {
                             await this.#requestHandler(req, {
                                 middleware
